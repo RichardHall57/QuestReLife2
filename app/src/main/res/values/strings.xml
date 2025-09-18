@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Budguette</string>
+    <string name="change_picture">Change Picture</string>
+    <string name="profile_image">Profile Image</string>
+    <string name="name">Name</string>
+    <string name="email">Email</string>
+    <string name="date_of_birth">Date of Birth</string>
+    <string name="enter_your_bio">Enter your bio</string>
+    <string name="save_bio">Prompt</string>
+    <string name="log_out">Sign out</string>
+    <string name="profile_prompt">Enter your prompt</string>
+    <string name="save_prompt_btn">Save Prompt</string>
+    <string name="generated_image_desc">Generated image</string>
+
+
+</resources>

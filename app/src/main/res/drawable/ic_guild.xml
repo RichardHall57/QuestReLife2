@@ -1,0 +1,17 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24"
+    android:tint="#000000">
+
+    <!-- Roof with flag -->
+    <path
+        android:fillColor="@android:color/white"
+        android:pathData="M12,3L3,12h3v7h4v-5h4v5h4v-7h3z"/>
+
+    <!-- Little tower flag for fantasy vibe -->
+    <path
+        android:fillColor="@android:color/white"
+        android:pathData="M13,3v2h2l-1,-1 1,-1h-2z"/>
+</vector>

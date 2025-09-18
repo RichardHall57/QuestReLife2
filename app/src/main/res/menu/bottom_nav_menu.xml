@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_guild"
+        android:icon="@drawable/ic_guild"
+        android:title="" /> <!-- Empty title -->
+    <item
+        android:id="@+id/nav_hero"
+        android:icon="@drawable/ic_hero"
+        android:title="" /> <!-- Empty title -->
+    <item
+        android:id="@+id/nav_adventure"
+        android:icon="@drawable/ic_adventure"
+        android:title="" /> <!-- Empty title -->
+    <item
+        android:id="@+id/nav_archive"
+        android:icon="@drawable/ic_archive"
+        android:title="" /> <!-- Empty title -->
+    <item
+        android:id="@+id/nav_quests"
+        android:icon="@drawable/ic_quests"
+        android:title="" /> <!-- Empty title -->
+</menu>
+

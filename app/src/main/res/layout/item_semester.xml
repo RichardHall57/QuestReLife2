@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="#FFFFFF">
+
+    <TextView
+        android:id="@+id/textSemesterName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Semester Name"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:paddingBottom="8dp" />
+
+    <TextView
+        android:id="@+id/textSemesterDates"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Start Date - End Date"
+        android:textSize="16sp"
+        android:paddingBottom="16dp" />
+
+    <!-- Delete button aligned left below the texts -->
+    <Button
+        android:id="@+id/delete_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Delete"
+        android:backgroundTint="#D1495B"
+        android:textColor="@android:color/white" />
+</LinearLayout>
+

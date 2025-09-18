@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "532591084043",
+    "project_id": "questrelife1",
+    "storage_bucket": "questrelife1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:532591084043:android:a88892196351192ec9bd0e",
+        "android_client_info": {
+          "package_name": "com.example.questrelife"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAj87a_4JdQOT8m98drcc_IC59Ly7hE-Us"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

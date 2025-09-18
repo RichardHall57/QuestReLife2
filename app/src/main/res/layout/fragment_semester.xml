@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:background="#FFFFFF">
+
+    <!-- Header Title -->
+    <TextView
+        android:id="@+id/header_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Your Semesters"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="16dp"
+        android:textColor="@android:color/black" />
+
+    <!-- Selected Semester Info -->
+    <LinearLayout
+        android:id="@+id/selected_semester_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="#F5F5F5"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/textSemesterName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Semester Name"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:paddingBottom="4dp" />
+
+        <TextView
+            android:id="@+id/textSemesterDates"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Start Date - End Date"
+            android:textSize="16sp"
+            android:textColor="@android:color/darker_gray"
+            android:paddingBottom="8dp" />
+    </LinearLayout>
+
+    <!-- RecyclerView to list all semesters -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/semester_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false" />
+
+    <!-- Fragment container to show SemesterFragment dynamically -->
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:visibility="gone" />
+
+    <!-- Add Semester Button -->
+    <Button
+        android:id="@+id/add_semester_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="➕ Add Semester"
+        android:backgroundTint="#003D5B"
+        android:textColor="@android:color/white"
+        android:layout_marginTop="12dp"
+        android:padding="12dp" />
+
+</LinearLayout>
