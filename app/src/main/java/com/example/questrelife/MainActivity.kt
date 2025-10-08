@@ -1,6 +1,7 @@
 package com.example.questrelife
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -20,6 +21,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         FirebaseApp.initializeApp(this)
 
+        val db = FirebaseFirestore.getInstance()
+        Log.d("FirestoreCheck", "Connected to project: ${db.app.options.projectId}")
+
+
         // Enable App Check in debug mode (safe for development)
         FirebaseAppCheck.getInstance()
             .installAppCheckProviderFactory(DebugAppCheckProviderFactory.getInstance())
@@ -27,7 +32,6 @@ class MainActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
 
         setContentView(R.layout.activity_main)
-
         setupBottomNavigation()
 
         // Load default fragment
@@ -66,9 +70,7 @@ class MainActivity : AppCompatActivity() {
                     val userId = auth.currentUser?.uid
                     if (userId != null) {
                         fetchSemesterDocument(userId)
-
-                        // 🔥 Fetch a specific Semester document after login
-                        fetchSemesterDocument("1nz8z670i2z3ufPtkc11")
+                        fetchAllSemesters() // Using Query
                     }
                 } else {
                     task.exception?.printStackTrace()
@@ -78,25 +80,31 @@ class MainActivity : AppCompatActivity() {
 
     private fun fetchSemesterDocument(documentId: String) {
         val docRef = db.collection("Semester").document(documentId)
-
         docRef.get()
             .addOnSuccessListener { document ->
                 if (document != null && document.exists()) {
-                    val semesterName = document.getString("name") // change to your actual field
-                    val semesterType = document.getString("type") // if you have a "type" field
-
+                    val semesterName = document.getString("name")
+                    val semesterType = document.getString("type")
                     println("Semester Name: $semesterName, Type: $semesterType")
-
-                    // ✅ Example: send this data to a fragment or UI
-                    // You could pass it as an argument to SemesterFragment
                 } else {
                     println("No such Semester document")
                 }
             }
-            .addOnFailureListener { e ->
-                e.printStackTrace()
-            }
+            .addOnFailureListener { e -> e.printStackTrace() }
     }
 
+    // ✅ Example of using Query
+    private fun fetchAllSemesters() {
+        val query: Query = db.collection("Semester").orderBy("startDate")
+        query.get()
+            .addOnSuccessListener { documents ->
+                for (doc in documents) {
+                    val name = doc.getString("name")
+                    val start = doc.getLong("startDate")
+                    val end = doc.getLong("endDate")
+                    println("Semester: $name, $start - $end")
+                }
+            }
+            .addOnFailureListener { e -> e.printStackTrace() }
+    }
 }
-

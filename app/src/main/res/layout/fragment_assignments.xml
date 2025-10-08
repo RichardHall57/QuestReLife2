@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/assignments_fragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:background="#FFFFFF">
+
+    <!-- Header row: Text then Back Button side by side -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="16dp">
+
+        <!-- Vertical layout for title and grade -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/header_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Assignment Title"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/black" />
+
+            <TextView
+                android:id="@+id/grade_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Grade"
+                android:textSize="16sp"
+                android:textColor="@android:color/black"
+                android:layout_marginTop="4dp" />
+
+        </LinearLayout>
+
+        <!-- Back or other button on the side -->
+        <Button
+            android:id="@+id/button_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="← Back"
+            android:backgroundTint="#003D5B"
+            android:textColor="@android:color/white"
+            android:layout_marginStart="16dp" />
+
+    </LinearLayout>
+
+
+
+
+    <!-- Optional: Selected Assignment Info (remove if not needed) -->
+    <LinearLayout
+
+    android:id="@+id/selected_assignment_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="#F5F5F5"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/assignment_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Assignment Title"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:paddingBottom="4dp" />
+
+        <TextView
+            android:id="@+id/assignment_due_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Due Date"
+            android:textSize="16sp"
+            android:textColor="@android:color/darker_gray"
+            android:paddingBottom="8dp" />
+    </LinearLayout>
+
+    <!-- RecyclerView to list all assignments -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/assignments_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:paddingBottom="8dp" />
+
+    <!-- Add Assignment Button -->
+    <Button
+        android:id="@+id/add_assignment_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="➕ Add Assignment"
+        android:backgroundTint="#003D5B"
+        android:textColor="@android:color/white"
+        android:layout_marginTop="12dp"
+        android:padding="12dp" />
+
+</LinearLayout>
