@@ -43,6 +43,7 @@ class GradeCalculationAdapter(
         assignments.clear()
         assignments.addAll(newList)
         notifyDataSetChanged()
+
     }
 
     // This function returns a letter grade based on the average
