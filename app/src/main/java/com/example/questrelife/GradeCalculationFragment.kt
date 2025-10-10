@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -19,47 +20,51 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 class GradeCalculationFragment : Fragment() {
 
-    companion object {
-        private const val ARG_CLASS_ID = "class_id"
-        private const val ARG_CLASS_NAME = "class_name"
-    }
-
     private var classId: String? = null
-    private var className: String? = null
     private val db = FirebaseFirestore.getInstance()
     private lateinit var adapter: GradeCalculationAdapter
     private lateinit var barChart: BarChart
     private lateinit var gpaText: TextView
+    private lateinit var levelProgressBar: ProgressBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        classId = arguments?.getString(ARG_CLASS_ID)
-        className = arguments?.getString(ARG_CLASS_NAME)
+        classId = arguments?.getString("class_id")
+        Log.d("GradeCalculation", "Fragment created with classId=$classId")
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_grade_calculation, container, false)
 
-        // Connect BarChart and GPA TextView
-        barChart = view.findViewById(R.id.gpa_bar_chart)
         gpaText = view.findViewById(R.id.assignment_gpa_text)
+        barChart = view.findViewById(R.id.gpa_bar_chart)
+        levelProgressBar = view.findViewById(R.id.level_progress)
 
-        // RecyclerView setup
         val recyclerView = view.findViewById<RecyclerView>(R.id.posts_recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        adapter = GradeCalculationAdapter() // <-- external adapter
+
+        adapter = GradeCalculationAdapter(
+            onProgressUpdate = { progress ->
+                Log.d("GradeCalculation", "Progress update: $progress")
+                levelProgressBar.progress = progress
+            },
+            onGradesUpdate = { grades ->
+                Log.d("GradeCalculation", "Adapter callback received grades: $grades")
+                updateGPAChart(grades)
+            }
+        )
         recyclerView.adapter = adapter
 
-        // Fetch assignments from Firestore
-        classId?.let { fetchAssignments(it) }
-
+        classId?.let { fetchAssignments(it) } ?: Log.e("GradeCalculation", "classId is null!")
         return view
     }
 
     private fun fetchAssignments(classId: String) {
+        Log.d("GradeCalculation", "Fetching assignments for classId=$classId")
         db.collection("Classes")
             .document(classId)
             .collection("Assignments")
@@ -69,42 +74,90 @@ class GradeCalculationFragment : Fragment() {
                     return@addSnapshotListener
                 }
 
-                val assignments = snapshot?.documents?.map { doc ->
+                if (snapshot == null) {
+                    Log.e("GradeCalculation", "Snapshot is null!")
+                    return@addSnapshotListener
+                }
+
+                Log.d("GradeCalculation", "Snapshot size: ${snapshot.size()}")
+
+                val assignments = snapshot.documents.map { doc ->
+                    val gradeValue = doc.get("grade")
+                    val grade = when (gradeValue) {
+                        is Number -> gradeValue.toFloat()
+                        is String -> gradeValue.toFloatOrNull() ?: 0f
+                        else -> 0f
+                    }
+
+                    Log.d(
+                        "GradeCalculation",
+                        "Doc ${doc.id}: raw grade=$gradeValue -> parsed grade=$grade"
+                    )
+
                     AssignmentItem(
                         id = doc.id,
-                        title = doc.getString("title") ?: "",
+                        title = doc.getString("title") ?: "Untitled",
                         description = doc.getString("description") ?: "",
                         dueDate = doc.getTimestamp("dueDate") ?: Timestamp.now(),
-                        grade = doc.getDouble("grade")?.toFloat() ?: 0f
+                        grade = grade
                     )
-                } ?: emptyList()
+                }
 
-                // Submit to adapter and update chart
+                Log.d("GradeCalculation", "Parsed assignments: ${assignments.map { it.grade }}")
+
+                // Submit list to adapter (this triggers the chart callback)
                 adapter.submitList(assignments)
-                updateGPAChart(assignments)
+
+                // Also force a chart update here as a backup
+                val grades = assignments.map { it.grade }
+                if (grades.isEmpty()) {
+                    Log.w("GradeCalculation", "No grades found!")
+                }
+                updateGPAChart(grades)
             }
     }
 
-    private fun updateGPAChart(assignments: List<AssignmentItem>) {
-        if (assignments.isEmpty()) return
+    private fun updateGPAChart(grades: List<Float>) {
+        Log.d("GradeCalculation", "Updating chart with grades: $grades")
 
-        val avgGrade = assignments.map { it.grade }.average().toFloat() // 0–100
-        val gpa = avgGrade / 25f // Convert 0–100 to 0–4 GPA
-
-        gpaText.text = "Average GPA: %.2f".format(gpa)
-
-        val entries = arrayListOf(BarEntry(0f, gpa))
-        val dataSet = BarDataSet(entries, "GPA").apply {
-            color = when {
-                gpa >= 3.5f -> Color.GREEN
-                gpa >= 2.0f -> Color.YELLOW
-                else -> Color.RED
-            }
+        val validGrades = grades.filter { it >= 0f }
+        if (validGrades.isEmpty()) {
+            Log.w("GradeCalculation", "No valid grades to display!")
+            gpaText.text = "Average GPA: 0.00"
+            barChart.clear()
+            barChart.invalidate()
+            return
         }
 
-        barChart.data = BarData(dataSet)
+        val avgGrade = validGrades.average().toFloat()
+        val gpa = avgGrade / 25f
+        gpaText.text = "Average GPA: %.2f".format(gpa)
+
+        val entries = validGrades.mapIndexed { index, grade ->
+            BarEntry(index.toFloat(), grade / 25f)
+        }
+
+        val dataSet = BarDataSet(entries, "GPA per Assignment").apply {
+            color = Color.BLUE
+            valueTextColor = Color.BLACK
+            valueTextSize = 12f
+        }
+
+        val barData = BarData(dataSet)
+        barData.barWidth = 0.5f
+
+        barChart.data = barData
+        barChart.setFitBars(true)
         barChart.description.isEnabled = false
-        barChart.animateY(1000)
+
+        // Set axis scaling to make bars visible
+        barChart.axisLeft.axisMinimum = 0f
+        barChart.axisLeft.axisMaximum = 4f
+        barChart.axisRight.axisMinimum = 0f
+        barChart.axisRight.axisMaximum = 4f
+
+        barChart.animateY(800)
         barChart.invalidate()
+        Log.d("GradeCalculation", "Chart updated successfully")
     }
 }

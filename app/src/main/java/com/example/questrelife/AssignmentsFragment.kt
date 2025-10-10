@@ -32,7 +32,7 @@ class AssignmentsFragment : Fragment() {
     private var classId: String? = null
     private var className: String? = null
     private val db = FirebaseFirestore.getInstance()
-    private lateinit var adapter: AssignmentAdapter  // Your adapter
+    private lateinit var adapter: AssignmentAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,7 +72,6 @@ class AssignmentsFragment : Fragment() {
         val recyclerView = view.findViewById<RecyclerView>(R.id.assignments_recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        // Pass delete lambda to adapter
         adapter = AssignmentAdapter { assignment ->
             classId?.let { cid ->
                 db.collection("Classes")
@@ -102,17 +101,31 @@ class AssignmentsFragment : Fragment() {
                 }
 
                 val assignments = snapshot?.documents?.map { doc ->
-                    AssignmentItem(
+                    // Robust grade parsing: supports Number or String
+                    val gradeValue = doc.get("grade")
+                    val grade = when (gradeValue) {
+                        is Number -> gradeValue.toFloat()
+                        is String -> gradeValue.toFloatOrNull() ?: 0f
+                        else -> 0f
+                    }
+
+                    val assignmentItem = AssignmentItem(
                         id = doc.id,
                         title = doc.getString("title") ?: "",
                         description = doc.getString("description") ?: "",
                         dueDate = doc.getTimestamp("dueDate") ?: Timestamp.now(),
-                        grade = doc.getDouble("grade")?.toFloat() ?: 0f // <--- ADD THIS
+                        grade = grade
                     )
+
+                    Log.d(
+                        "AssignmentsFragment",
+                        "Fetched: ${assignmentItem.title} -> Grade: ${assignmentItem.grade}"
+                    )
+
+                    assignmentItem
                 } ?: emptyList()
 
                 adapter.submitList(assignments)
-
             }
     }
 }

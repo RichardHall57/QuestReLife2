@@ -7,7 +7,9 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
 class GradeCalculationAdapter(
-    private val assignments: MutableList<AssignmentItem> = mutableListOf()
+    private val assignments: MutableList<AssignmentItem> = mutableListOf(),
+    private val onProgressUpdate: ((Int) -> Unit)? = null,
+    private val onGradesUpdate: ((List<Float>) -> Unit)? = null
 ) : RecyclerView.Adapter<GradeCalculationAdapter.AssignmentViewHolder>() {
 
     inner class AssignmentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -25,15 +27,9 @@ class GradeCalculationAdapter(
 
     override fun onBindViewHolder(holder: AssignmentViewHolder, position: Int) {
         val assignment = assignments[position]
-
         holder.titleText.text = assignment.title
         holder.descriptionText.text = assignment.description
-
-        // Use the gradeFunction to show both numeric and letter grade
-        val numericGrade = assignment.grade
-        val letterGrade = gradeFunction(numericGrade)
-
-        holder.gradeText.text = "Grade: $numericGrade ($letterGrade)"
+        holder.gradeText.text = "Grade: ${assignment.grade} (${gradeFunction(assignment.grade)})"
         holder.dueDateText.text = "Due: ${assignment.dueDate.toDate()}"
     }
 
@@ -43,17 +39,25 @@ class GradeCalculationAdapter(
         assignments.clear()
         assignments.addAll(newList)
         notifyDataSetChanged()
-
+        updateProgress()
+        onGradesUpdate?.invoke(assignments.map { it.grade })
     }
 
-    // This function returns a letter grade based on the average
-    private fun gradeFunction(avg: Float): Char {
-        return when {
-            avg >= 90 -> 'A'
-            avg >= 80 -> 'B'
-            avg >= 70 -> 'C'
-            avg >= 60 -> 'D'
-            else -> 'F'
+    private fun updateProgress() {
+        if (assignments.isEmpty()) {
+            onProgressUpdate?.invoke(0)
+            return
         }
+        val completedCount = assignments.count { it.grade > 0 }
+        val progress = (completedCount.toFloat() / assignments.size * 100).toInt()
+        onProgressUpdate?.invoke(progress)
+    }
+
+    private fun gradeFunction(avg: Float): Char = when {
+        avg >= 90 -> 'A'
+        avg >= 80 -> 'B'
+        avg >= 70 -> 'C'
+        avg >= 60 -> 'D'
+        else -> 'F'
     }
 }

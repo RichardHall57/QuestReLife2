@@ -25,10 +25,21 @@
         android:layout_height="200dp"
         android:layout_marginBottom="16dp"/>
 
+    <!-- Level/Progress Bar -->
+    <ProgressBar
+        android:id="@+id/level_progress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="24dp"
+        android:layout_marginBottom="16dp"
+        android:progress="0"
+        android:max="100"
+        android:progressTint="@android:color/holo_blue_light"
+        android:background="@android:color/darker_gray"/>
+
     <!-- RecyclerView for assignments -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/posts_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 </LinearLayout>
-
