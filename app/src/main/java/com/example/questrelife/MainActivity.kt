@@ -9,23 +9,16 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.appcheck.FirebaseAppCheck
 import com.google.firebase.appcheck.debug.DebugAppCheckProviderFactory
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
-    private val db by lazy { FirebaseFirestore.getInstance() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         FirebaseApp.initializeApp(this)
 
-        val db = FirebaseFirestore.getInstance()
-        Log.d("FirestoreCheck", "Connected to project: ${db.app.options.projectId}")
-
-
-        // Enable App Check in debug mode (safe for development)
+        // Enable Firebase App Check in debug mode
         FirebaseAppCheck.getInstance()
             .installAppCheckProviderFactory(DebugAppCheckProviderFactory.getInstance())
 
@@ -41,8 +34,8 @@ class MainActivity : AppCompatActivity() {
                 .commit()
         }
 
-        // Example: log in the user (replace with real credentials or use Auth UI)
-        loginUser("richardhall157@gmail.com", "YOUR_PASSWORD")
+        // Example login (replace with real credentials)
+        loginUser("richardhall157@gmail.com", "REAL_PASSWORD_HERE")
     }
 
     private fun setupBottomNavigation() {
@@ -52,59 +45,37 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_guild -> HomeFragment()
                 R.id.nav_adventure -> QuestLogFragment()
                 R.id.nav_quests -> SemesterFragment()
-                R.id.nav_archive -> GradeCalculationFragment()
+                R.id.nav_archive -> {
+                    val classId = "2HFcXxT1jN3oIgbknRF2"
+                    val className = "Senior Project"
+                    GradeCalculationFragment.newInstance(classId, className)
+                }
                 R.id.nav_hero -> ProfileFragment()
                 else -> HomeFragment()
             }
             supportFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, fragment)
                 .commit()
+
+            // Log which fragment is being shown
+            Log.d("QuestReLife", "Current Fragment: ${fragment::class.java.simpleName}")
+
             true
         }
     }
 
+    /** Login user and log success or failure */
     private fun loginUser(email: String, password: String) {
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     val userId = auth.currentUser?.uid
-                    if (userId != null) {
-                        fetchSemesterDocument(userId)
-                        fetchAllSemesters() // Using Query
-                    }
+                    Log.d("MainActivity", "Logged in user: $userId")
                 } else {
+                    val errorMsg = task.exception?.localizedMessage
+                    Log.e("MainActivity", "Authentication failed: $errorMsg")
                     task.exception?.printStackTrace()
                 }
             }
-    }
-
-    private fun fetchSemesterDocument(documentId: String) {
-        val docRef = db.collection("Semester").document(documentId)
-        docRef.get()
-            .addOnSuccessListener { document ->
-                if (document != null && document.exists()) {
-                    val semesterName = document.getString("name")
-                    val semesterType = document.getString("type")
-                    println("Semester Name: $semesterName, Type: $semesterType")
-                } else {
-                    println("No such Semester document")
-                }
-            }
-            .addOnFailureListener { e -> e.printStackTrace() }
-    }
-
-    // ✅ Example of using Query
-    private fun fetchAllSemesters() {
-        val query: Query = db.collection("Semester").orderBy("startDate")
-        query.get()
-            .addOnSuccessListener { documents ->
-                for (doc in documents) {
-                    val name = doc.getString("name")
-                    val start = doc.getLong("startDate")
-                    val end = doc.getLong("endDate")
-                    println("Semester: $name, $start - $end")
-                }
-            }
-            .addOnFailureListener { e -> e.printStackTrace() }
     }
 }

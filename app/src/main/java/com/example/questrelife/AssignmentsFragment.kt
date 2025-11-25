@@ -72,17 +72,37 @@ class AssignmentsFragment : Fragment() {
         val recyclerView = view.findViewById<RecyclerView>(R.id.assignments_recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        adapter = AssignmentAdapter { assignment ->
-            classId?.let { cid ->
-                db.collection("Classes")
-                    .document(cid)
-                    .collection("Assignments")
-                    .document(assignment.id)
-                    .delete()
-                    .addOnSuccessListener { Log.d("AssignmentsFragment", "Deleted ${assignment.title}") }
-                    .addOnFailureListener { e -> Log.e("AssignmentsFragment", "Delete failed", e) }
+        adapter = AssignmentAdapter(
+            onDelete = { assignment ->
+                classId?.let { cid ->
+                    db.collection("Classes")
+                        .document(cid)
+                        .collection("Assignments")
+                        .document(assignment.id)
+                        .delete()
+                        .addOnSuccessListener { Log.d("AssignmentsFragment", "Deleted ${assignment.title}") }
+                        .addOnFailureListener { e -> Log.e("AssignmentsFragment", "Delete failed", e) }
+                }
+            },
+            onClick = { assignment ->
+                val id = classId
+                val name = className
+                if (id != null && name != null) {
+                    val fragment = CreateAssignmentFragment.newInstance(id, name).apply {
+                        arguments = arguments?.apply {
+                            putString("assignmentId", assignment.id)
+                        } ?: Bundle().apply {
+                            putString("assignmentId", assignment.id)
+                        }
+                    }
+
+                    parentFragmentManager.beginTransaction()
+                        .replace(R.id.fragment_container, fragment)
+                        .addToBackStack(null)
+                        .commit()
+                }
             }
-        }
+        )
 
         recyclerView.adapter = adapter
 
@@ -101,7 +121,6 @@ class AssignmentsFragment : Fragment() {
                 }
 
                 val assignments = snapshot?.documents?.map { doc ->
-                    // Robust grade parsing: supports Number or String
                     val gradeValue = doc.get("grade")
                     val grade = when (gradeValue) {
                         is Number -> gradeValue.toFloat()
@@ -109,20 +128,14 @@ class AssignmentsFragment : Fragment() {
                         else -> 0f
                     }
 
-                    val assignmentItem = AssignmentItem(
+                    AssignmentItem(
                         id = doc.id,
                         title = doc.getString("title") ?: "",
                         description = doc.getString("description") ?: "",
                         dueDate = doc.getTimestamp("dueDate") ?: Timestamp.now(),
-                        grade = grade
+                        grade = grade,
+                        type = doc.getString("type") ?: "Other"
                     )
-
-                    Log.d(
-                        "AssignmentsFragment",
-                        "Fetched: ${assignmentItem.title} -> Grade: ${assignmentItem.grade}"
-                    )
-
-                    assignmentItem
                 } ?: emptyList()
 
                 adapter.submitList(assignments)

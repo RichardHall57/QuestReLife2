@@ -9,6 +9,7 @@
     <color name="light_grey">#CCCCCC</color>
     <color name="teal_700">#018786</color>
     <color name="gray">#CCCCCC</color>
+    <color name="purple_500">#6200EE</color>
     <color name="transparent_white">#80FFFFFF</color> <!-- 50% transparent white -->
 
 

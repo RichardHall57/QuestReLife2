@@ -1,5 +1,6 @@
 package com.example.questrelife
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,13 +10,13 @@ import androidx.recyclerview.widget.RecyclerView
 class GradeCalculationAdapter(
     private val assignments: MutableList<AssignmentItem> = mutableListOf(),
     private val onProgressUpdate: ((Int) -> Unit)? = null,
-    private val onGradesUpdate: ((List<Float>) -> Unit)? = null
+    private val onCompletionUpdate: ((List<Float>) -> Unit)? = null
 ) : RecyclerView.Adapter<GradeCalculationAdapter.AssignmentViewHolder>() {
 
     inner class AssignmentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val titleText: TextView = itemView.findViewById(R.id.assignment_title)
         val descriptionText: TextView = itemView.findViewById(R.id.assignment_description)
-        val gradeText: TextView = itemView.findViewById(R.id.assignment_grade)
+        val statusText: TextView = itemView.findViewById(R.id.assignment_grade)
         val dueDateText: TextView = itemView.findViewById(R.id.assignment_due_date)
     }
 
@@ -29,8 +30,26 @@ class GradeCalculationAdapter(
         val assignment = assignments[position]
         holder.titleText.text = assignment.title
         holder.descriptionText.text = assignment.description
-        holder.gradeText.text = "Grade: ${assignment.grade} (${gradeFunction(assignment.grade)})"
-        holder.dueDateText.text = "Due: ${assignment.dueDate.toDate()}"
+
+        val grade = assignment.grade
+        if (grade > 0f) {
+            val letter = convertToLetter(grade)
+            holder.statusText.text =
+                "Completed – Grade: ${"%.1f".format(grade)}% ($letter)"
+
+            // ✅ Color coding
+            when {
+                grade >= 80 -> holder.statusText.setTextColor(Color.parseColor("#2E7D32")) // green
+                grade in 70.0..79.99 -> holder.statusText.setTextColor(Color.parseColor("#F9A825")) // yellow
+                else -> holder.statusText.setTextColor(Color.parseColor("#C62828")) // red
+            }
+        } else {
+            holder.statusText.text = "Incomplete – Not graded yet"
+            holder.statusText.setTextColor(Color.GRAY)
+        }
+
+        val dueDate = assignment.dueDate.toDate().toString().substring(0, 16)
+        holder.dueDateText.text = "Due: $dueDate"
     }
 
     override fun getItemCount(): Int = assignments.size
@@ -40,7 +59,7 @@ class GradeCalculationAdapter(
         assignments.addAll(newList)
         notifyDataSetChanged()
         updateProgress()
-        onGradesUpdate?.invoke(assignments.map { it.grade })
+        onCompletionUpdate?.invoke(assignments.map { it.grade })
     }
 
     private fun updateProgress() {
@@ -48,16 +67,18 @@ class GradeCalculationAdapter(
             onProgressUpdate?.invoke(0)
             return
         }
-        val completedCount = assignments.count { it.grade > 0 }
+        val completedCount = assignments.count { it.grade > 0f }
         val progress = (completedCount.toFloat() / assignments.size * 100).toInt()
         onProgressUpdate?.invoke(progress)
     }
 
-    private fun gradeFunction(avg: Float): Char = when {
-        avg >= 90 -> 'A'
-        avg >= 80 -> 'B'
-        avg >= 70 -> 'C'
-        avg >= 60 -> 'D'
-        else -> 'F'
+    private fun convertToLetter(grade: Float): String {
+        return when {
+            grade >= 90 -> "A"
+            grade >= 80 -> "B"
+            grade >= 70 -> "C"
+            grade >= 60 -> "D"
+            else -> "F"
+        }
     }
 }

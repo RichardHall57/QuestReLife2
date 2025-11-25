@@ -20,7 +20,7 @@
             android:textSize="24sp"
             android:textStyle="bold"
             android:textColor="#000000"
-            android:paddingBottom="24dp" />
+            android:layout_marginBottom="24dp" />
 
         <!-- Title input -->
         <EditText
@@ -28,9 +28,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Assignment Title"
-            android:inputType="textPersonName"
+            android:inputType="textCapWords"
             android:padding="12dp"
-            android:background="@android:drawable/edit_text"
+            android:background="@drawable/edit_text_bg"
             android:layout_marginBottom="16dp" />
 
         <!-- Description input -->
@@ -42,7 +42,7 @@
             android:inputType="textMultiLine"
             android:minLines="3"
             android:padding="12dp"
-            android:background="@android:drawable/edit_text"
+            android:background="@drawable/edit_text_bg"
             android:gravity="top"
             android:layout_marginBottom="16dp" />
 
@@ -54,8 +54,25 @@
             android:hint="Grade (0–100)"
             android:inputType="numberDecimal"
             android:padding="12dp"
-            android:background="@android:drawable/edit_text"
+            android:background="@drawable/edit_text_bg"
             android:layout_marginBottom="16dp" />
+
+        <!-- Assignment Type Label -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Assignment Type"
+            android:textSize="16sp"
+            android:textColor="#000000"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Type Spinner -->
+        <Spinner
+            android:id="@+id/assignment_type_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:spinnerMode="dropdown" />
 
         <!-- Due date button -->
         <Button

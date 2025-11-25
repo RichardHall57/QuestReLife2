@@ -8,24 +8,24 @@
     android:padding="16dp"
     tools:context=".GradeCalculationFragment">
 
-    <!-- GPA Text -->
+    <!-- GPA / Completion Text -->
     <TextView
         android:id="@+id/assignment_gpa_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Average GPA: 0.0"
+        android:text="Completion: 0%"
         android:textSize="16sp"
         android:textColor="#000000"
-        android:layout_marginBottom="16dp"/>
+        android:layout_marginBottom="16dp" />
 
     <!-- Bar Chart -->
     <com.github.mikephil.charting.charts.BarChart
         android:id="@+id/gpa_bar_chart"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_marginBottom="16dp"/>
+        android:layout_height="250dp"
+        android:layout_marginBottom="16dp" />
 
-    <!-- Level/Progress Bar -->
+    <!-- Level / Progress Bar -->
     <ProgressBar
         android:id="@+id/level_progress"
         style="?android:attr/progressBarStyleHorizontal"
@@ -35,11 +35,73 @@
         android:progress="0"
         android:max="100"
         android:progressTint="@android:color/holo_blue_light"
-        android:background="@android:color/darker_gray"/>
+        android:background="@android:color/darker_gray" />
+
+    <!-- Homework Progress -->
+    <TextView
+        android:id="@+id/homework_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Homework Progress"
+        android:textSize="16sp"
+        android:layout_marginBottom="8dp" />
+
+    <ProgressBar
+        android:id="@+id/homework_progress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="24dp"
+        android:layout_marginBottom="16dp"
+        android:progress="0"
+        android:max="100"
+        android:progressTint="@android:color/holo_orange_light"
+        android:background="@android:color/darker_gray" />
+
+    <!-- Test Progress -->
+    <TextView
+        android:id="@+id/test_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Test Progress"
+        android:textSize="16sp"
+        android:layout_marginBottom="8dp" />
+
+    <ProgressBar
+        android:id="@+id/test_progress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="24dp"
+        android:layout_marginBottom="16dp"
+        android:progress="0"
+        android:max="100"
+        android:progressTint="@android:color/holo_green_light"
+        android:background="@android:color/darker_gray" />
+
+    <!-- Project Progress -->
+    <TextView
+        android:id="@+id/project_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Project Progress"
+        android:textSize="16sp"
+        android:layout_marginBottom="8dp" />
+
+    <ProgressBar
+        android:id="@+id/project_progress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="24dp"
+        android:layout_marginBottom="16dp"
+        android:progress="0"
+        android:max="100"
+        android:progressTint="@android:color/holo_red_light"
+        android:background="@android:color/darker_gray" />
 
     <!-- RecyclerView for assignments -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/posts_recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
 </LinearLayout>

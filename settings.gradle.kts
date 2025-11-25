@@ -1,11 +1,11 @@
 pluginManagement {
-        repositories {
-            google()
-            mavenCentral()
-            gradlePluginPortal()
-            maven("https://jitpack.io")
-        }
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+        maven("https://jitpack.io")
     }
+}
 
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
@@ -18,4 +18,3 @@ dependencyResolutionManagement {
 
 rootProject.name = "QuestReLife"
 include(":app")
- 

@@ -7,7 +7,7 @@
     android:padding="24dp"
     android:background="#FFFFFF">
 
-    <!-- Header row: Text then Button side by side -->
+    <!-- Header row: Text then Back Button -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -35,7 +35,7 @@
             android:layout_marginStart="16dp" />
     </LinearLayout>
 
-    <!-- Selected Class Info (optional, hidden by default) -->
+    <!-- Selected Class Info (hidden by default) -->
     <LinearLayout
         android:id="@+id/selected_class_info"
         android:layout_width="match_parent"
@@ -62,6 +62,17 @@
             android:textSize="16sp"
             android:textColor="@android:color/darker_gray"
             android:paddingBottom="8dp" />
+
+        <!-- View Grades Button -->
+        <Button
+            android:id="@+id/view_grades_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="📊 View Grades"
+            android:backgroundTint="#003D5B"
+            android:textColor="@android:color/white"
+            android:padding="12dp"
+            android:layout_marginTop="8dp"/>
     </LinearLayout>
 
     <!-- RecyclerView to list all classes -->
@@ -92,4 +103,3 @@
         android:padding="12dp" />
 
 </LinearLayout>
-

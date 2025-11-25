@@ -23,7 +23,8 @@ data class AssignmentItem(
     val title: String,
     val description: String,
     val dueDate: Timestamp = Timestamp.now(),
-    val grade: Float = 0f
+    val grade: Float = 0f,
+    val type: String
 )
 
 

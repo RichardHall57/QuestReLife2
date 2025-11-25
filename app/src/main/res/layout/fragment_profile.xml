@@ -1,20 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="#FAFAFA">
 
-    <TextView
-        android:id="@+id/text_hello_world"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        android:textSize="24sp"
-        android:textColor="@android:color/black"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:paddingBottom="24dp">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <!-- Profile Name -->
+        <EditText
+            android:id="@+id/profile_name_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Character Name"
+            android:inputType="textPersonName"
+            android:padding="12dp"
+            android:background="@android:drawable/edit_text" />
+
+        <!-- RPG Class -->
+        <Spinner
+            android:id="@+id/profile_class_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp" />
+
+        <!-- Gear / Equipment -->
+        <EditText
+            android:id="@+id/profile_gear_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Gear or Weapon (e.g., sword, staff)"
+            android:layout_marginTop="12dp"
+            android:padding="12dp"
+            android:background="@android:drawable/edit_text" />
+
+        <!-- Pose -->
+        <EditText
+            android:id="@+id/profile_pose_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Pose or Action (e.g., standing heroically)"
+            android:layout_marginTop="12dp"
+            android:padding="12dp"
+            android:background="@android:drawable/edit_text" />
+
+        <!-- Art Style -->
+        <Spinner
+            android:id="@+id/profile_style_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp" />
+
+        <!-- Generate Button -->
+        <Button
+            android:id="@+id/button_generate_image"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Generate Image"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="@color/teal_700" />
+
+        <!-- Progress Bar -->
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:visibility="gone" />
+
+        <!-- Image Preview -->
+        <ImageView
+            android:id="@+id/profile_image_view"
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            android:layout_marginTop="16dp"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
+            android:background="@android:color/darker_gray"
+            android:contentDescription="Generated profile image" />
+
+        <!-- Save Button -->
+        <Button
+            android:id="@+id/button_save_image"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Save Image"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="@color/purple_500" />
+
+    </LinearLayout>
+</ScrollView>
+

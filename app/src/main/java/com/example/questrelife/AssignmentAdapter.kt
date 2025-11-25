@@ -10,7 +10,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class AssignmentAdapter(
-    private val onDelete: (AssignmentItem) -> Unit // Callback for delete
+    private val onDelete: (AssignmentItem) -> Unit,      // Existing delete callback
+    private val onClick: (AssignmentItem) -> Unit        // New click callback
 ) : RecyclerView.Adapter<AssignmentAdapter.AssignmentViewHolder>() {
 
     private val assignmentList = mutableListOf<AssignmentItem>()
@@ -35,24 +36,25 @@ class AssignmentAdapter(
         val date = assignment.dueDate.toDate()
         val formatter = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
         holder.dueDateView.text = "Due: ${formatter.format(date)}"
+        holder.typeView.text = "Type: ${assignment.type}"
 
-
-        // Call gradeFunction to get the letter grade
         val numericGrade = assignment.grade
         val letterGrade = gradeFunction(numericGrade)
-
         holder.gradeView.text = "Grade: $numericGrade ($letterGrade)"
 
-
-        // Each delete button works for its own assignment
+        // Delete button callback
         holder.deleteButton.setOnClickListener {
             onDelete(assignment)
+        }
+
+        // Entire item click callback for editing
+        holder.itemView.setOnClickListener {
+            onClick(assignment)
         }
     }
 
     override fun getItemCount(): Int = assignmentList.size
 
-    // Function to calculate letter grade
     private fun gradeFunction(avg: Float): Char {
         return when {
             avg >= 90 -> 'A'
@@ -68,6 +70,7 @@ class AssignmentAdapter(
         val descriptionView: TextView = itemView.findViewById(R.id.assignment_description)
         val dueDateView: TextView = itemView.findViewById(R.id.assignment_due_date)
         val gradeView: TextView = itemView.findViewById(R.id.assignment_grade)
-        val deleteButton: Button = itemView.findViewById(R.id.button_delete_assignment) // Individual delete
+        val typeView: TextView = itemView.findViewById(R.id.assignment_type)
+        val deleteButton: Button = itemView.findViewById(R.id.button_delete_assignment)
     }
 }

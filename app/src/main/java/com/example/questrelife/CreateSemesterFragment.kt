@@ -9,8 +9,8 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import com.google.firebase.Timestamp
 import com.example.questrelife.addClass
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import java.util.*
@@ -25,12 +25,13 @@ class CreateSemesterFragment : Fragment() {
     private val db = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
 
-    // Use Timestamp instead of Long
+    // Use only Firebase Timestamp
     private var startDateTimestamp: Timestamp? = null
     private var endDateTimestamp: Timestamp? = null
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.activity_create_semester, container, false)
@@ -60,7 +61,6 @@ class CreateSemesterFragment : Fragment() {
             }
         }
 
-        // Create Button
         createButton.setOnClickListener {
             val name = nameEditText.text.toString().trim()
 
@@ -80,7 +80,6 @@ class CreateSemesterFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            // Create Semester with Timestamp fields
             val semester = Semester(
                 name = name,
                 startDate = startDateTimestamp!!,
@@ -130,4 +129,5 @@ class CreateSemesterFragment : Fragment() {
         )
     }
 }
+
 
