@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="24dp"
@@ -26,38 +25,37 @@
         <EditText
             android:id="@+id/assignment_title_edit_text"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="44dp"
             android:hint="Assignment Title"
             android:inputType="textCapWords"
             android:padding="12dp"
-            android:background="@drawable/edit_text_bg"
+            android:background="@drawable/rounded_input_alt"
             android:layout_marginBottom="16dp" />
 
         <!-- Description input -->
         <EditText
             android:id="@+id/assignment_description_edit_text"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="120dp"
             android:hint="Description"
             android:inputType="textMultiLine"
-            android:minLines="3"
             android:padding="12dp"
-            android:background="@drawable/edit_text_bg"
             android:gravity="top"
+            android:background="@drawable/rounded_input_alt"
             android:layout_marginBottom="16dp" />
 
         <!-- Grade input -->
         <EditText
             android:id="@+id/assignment_grade_edit_text"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="44dp"
             android:hint="Grade (0–100)"
             android:inputType="numberDecimal"
             android:padding="12dp"
-            android:background="@drawable/edit_text_bg"
+            android:background="@drawable/rounded_input_alt"
             android:layout_marginBottom="16dp" />
 
-        <!-- Assignment Type Label -->
+        <!-- Assignment Type -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -66,34 +64,34 @@
             android:textColor="#000000"
             android:layout_marginBottom="8dp" />
 
-        <!-- Type Spinner -->
         <Spinner
             android:id="@+id/assignment_type_spinner"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
-            android:spinnerMode="dropdown" />
+            android:layout_height="44dp"
+            android:background="@drawable/rounded_input_alt"
+            android:padding="8dp"
+            android:layout_marginBottom="24dp" />
 
         <!-- Due date button -->
         <Button
             android:id="@+id/due_date_button"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:text="Select Due Date"
+            android:background="@drawable/rounded_button"
             android:backgroundTint="#003D5B"
             android:textColor="#FFFFFF"
-            android:padding="12dp"
             android:layout_marginBottom="24dp" />
 
         <!-- Create assignment button -->
         <Button
             android:id="@+id/create_assignment_button"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:text="Create Assignment"
+            android:background="@drawable/rounded_button"
             android:backgroundTint="#00796B"
-            android:textColor="#FFFFFF"
-            android:padding="12dp" />
+            android:textColor="#FFFFFF" />
 
     </LinearLayout>
 </ScrollView>

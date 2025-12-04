@@ -1,99 +1,166 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
-    android:background="#FAFAFA">
+    android:background="#003866">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center_horizontal"
-        android:paddingBottom="24dp">
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginVertical="24dp">
 
-        <!-- Profile Name -->
-        <EditText
-            android:id="@+id/profile_name_input"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Character Name"
-            android:inputType="textPersonName"
-            android:padding="12dp"
-            android:background="@android:drawable/edit_text" />
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:background="@drawable/round_panel"
+            android:padding="24dp">
 
-        <!-- RPG Class -->
-        <Spinner
-            android:id="@+id/profile_class_spinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp" />
+            <!-- Profile Picture -->
+            <ImageView
+                android:id="@+id/profile_picture"
+                android:layout_width="110dp"
+                android:layout_height="110dp"
+                android:src="@drawable/ic_default_avatar"
+                android:scaleType="centerCrop"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/circle_background" />
 
-        <!-- Gear / Equipment -->
-        <EditText
-            android:id="@+id/profile_gear_input"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Gear or Weapon (e.g., sword, staff)"
-            android:layout_marginTop="12dp"
-            android:padding="12dp"
-            android:background="@android:drawable/edit_text" />
+            <!-- XP Row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="8dp">
 
-        <!-- Pose -->
-        <EditText
-            android:id="@+id/profile_pose_input"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Pose or Action (e.g., standing heroically)"
-            android:layout_marginTop="12dp"
-            android:padding="12dp"
-            android:background="@android:drawable/edit_text" />
+                <TextView
+                    android:id="@+id/xp_circle"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:text="XP"
+                    android:gravity="center"
+                    android:background="@drawable/circle_background"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold"
+                    android:layout_marginEnd="12dp" />
 
-        <!-- Art Style -->
-        <Spinner
-            android:id="@+id/profile_style_spinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp" />
+                <ProgressBar
+                    android:id="@+id/xp_bar"
+                    android:layout_width="0dp"
+                    android:layout_height="24dp"
+                    android:layout_weight="1"
+                    style="@android:style/Widget.DeviceDefault.Light.ProgressBar.Horizontal"
+                    android:progress="60"
+                    android:progressTint="#6C00FF"
+                    android:backgroundTint="#CCCCCC" />
 
-        <!-- Generate Button -->
-        <Button
-            android:id="@+id/button_generate_image"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Generate Image"
-            android:layout_marginTop="16dp"
-            android:backgroundTint="@color/teal_700" />
+                <TextView
+                    android:id="@+id/level_number"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Lvl 5"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
+                    android:layout_marginStart="12dp"/>
+            </LinearLayout>
 
-        <!-- Progress Bar -->
-        <ProgressBar
-            android:id="@+id/progress_bar"
-            style="?android:attr/progressBarStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:visibility="gone" />
+            <!-- XP Amount -->
+            <TextView
+                android:id="@+id/xp_amount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="XP: 1200"
+                android:textColor="#444444"
+                android:layout_marginBottom="16dp" />
 
-        <!-- Image Preview -->
-        <ImageView
-            android:id="@+id/profile_image_view"
-            android:layout_width="250dp"
-            android:layout_height="250dp"
-            android:layout_marginTop="16dp"
-            android:adjustViewBounds="true"
-            android:scaleType="centerCrop"
-            android:background="@android:color/darker_gray"
-            android:contentDescription="Generated profile image" />
+            <!-- Name Input -->
+            <EditText
+                android:id="@+id/profile_name_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Character Name"
+                android:layout_marginTop="12dp"
+                android:padding="12dp"
+                android:background="@android:drawable/edit_text"
+                android:textColor="@color/black"
+                android:textColorHint="#444"/>
 
-        <!-- Save Button -->
-        <Button
-            android:id="@+id/button_save_image"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Save Image"
-            android:layout_marginTop="16dp"
-            android:backgroundTint="@color/purple_500" />
+            <!-- Class Spinner -->
+            <Spinner
+                android:id="@+id/profile_class_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp" />
 
-    </LinearLayout>
-</ScrollView>
+            <!-- Gear Spinner -->
+            <Spinner
+                android:id="@+id/profile_gear_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp" />
 
+            <!-- Pose Spinner -->
+            <Spinner
+                android:id="@+id/profile_pose_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp" />
+
+            <!-- Style Spinner -->
+            <Spinner
+                android:id="@+id/profile_style_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp" />
+
+            <!-- Generate Button -->
+            <Button
+                android:id="@+id/button_generate_image"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Generate Image"
+                android:layout_marginTop="16dp"
+                android:backgroundTint="#6C00FF"
+                android:textColor="@android:color/white" />
+
+            <!-- Progress Bar -->
+            <ProgressBar
+                android:id="@+id/progress_bar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:visibility="gone" />
+
+            <!-- Generated Image -->
+            <ImageView
+                android:id="@+id/profile_image_view"
+                android:layout_width="250dp"
+                android:layout_height="250dp"
+                android:layout_marginTop="16dp"
+                android:scaleType="centerCrop"
+                android:background="@android:color/darker_gray"
+                android:contentDescription="Generated profile image" />
+
+            <!-- Save Button -->
+            <Button
+                android:id="@+id/button_save_image"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Save Image"
+                android:layout_marginTop="16dp"
+                android:backgroundTint="#003866"
+                android:textColor="@android:color/white" />
+
+        </LinearLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

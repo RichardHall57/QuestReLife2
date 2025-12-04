@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Budguette</string>
+    <string name="app_name">QuestReLife</string>
     <string name="change_picture">Change Picture</string>
     <string name="profile_image">Profile Image</string>
     <string name="name">Name</string>
@@ -11,6 +11,21 @@
     <string name="profile_prompt">Enter your prompt</string>
     <string name="save_prompt_button">Save Prompt</string>
     <string name="generated_image_desc">Generated Image</string>
+    <string name="login_title">Login</string>
+    <string name="name_label">Name</string>
+    <string name="name_hint">Enter your name</string>
+    <string name="password_label">Password</string>
+    <string name="password_hint">Enter your password</string>
+    <string name="login_button">Log In</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="sign_up_here">No Account? Sign Up Here!</string>
+    <string name="create_avatar">Create your avatar!</string>
+    <string name="generated_profile_image">Generated profile image</string>
+    <string name="level_text">Level</string>
+    <string name="generate_avatar">Generate Avatar</string>
+    <string name="character_name">Character Name</string>
+    <string name="pose_action">Pose / Action</string>
+    <string name="save_avatar">Save Avatar</string>
 
     <string-array name="assignment_types">
         <item>Classwork</item>

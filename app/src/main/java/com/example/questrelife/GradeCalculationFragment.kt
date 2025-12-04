@@ -45,6 +45,7 @@ class GradeCalculationFragment : Fragment() {
     companion object {
         private const val ARG_CLASS_ID = "class_id"
         private const val ARG_CLASS_NAME = "class_name"
+
         fun newInstance(classId: String, className: String): GradeCalculationFragment {
             val fragment = GradeCalculationFragment()
             val args = Bundle()
@@ -217,5 +218,3 @@ class GradeCalculationFragment : Fragment() {
         else -> Color.parseColor("#C62828")
     }
 }
-
-
