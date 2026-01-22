@@ -43,7 +43,7 @@ class MainActivity : AppCompatActivity() {
         bottomNav.setOnItemSelectedListener { item ->
             val fragment: Fragment = when (item.itemId) {
                 R.id.nav_guild -> HomeFragment()
-                R.id.nav_adventure -> QuestLogFragment()
+                R.id.nav_adventure -> CalendarFragment()
                 R.id.nav_quests -> SemesterFragment()
                 R.id.nav_archive -> {
                     val classId = "2HFcXxT1jN3oIgbknRF2"

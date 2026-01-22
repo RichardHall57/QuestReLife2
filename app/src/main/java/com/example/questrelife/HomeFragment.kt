@@ -24,6 +24,8 @@ class HomeFragment : Fragment() {
     private val testMDP = AcademicMDP()
     private val projectMDP = AcademicMDP()
 
+    private var assignments: MutableList<AssignmentItem> = mutableListOf()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -36,7 +38,8 @@ class HomeFragment : Fragment() {
 
         binding.tvWelcome.text = "Welcome back, Adventurer!"
 
-        loadStats()
+        // Load assignments and update UI
+        loadAssignments()
 
         binding.btnOpenLog.setOnClickListener {
             Snackbar.make(binding.root, "Opening Quest Log…", Snackbar.LENGTH_SHORT).show()
@@ -45,71 +48,110 @@ class HomeFragment : Fragment() {
         return binding.root
     }
 
-    private fun loadStats() {
+    private fun loadAssignments() {
+        // Step 1: Add dummy data first
+        assignments = mutableListOf(
+            AssignmentItem(
+                id = "1",
+                title = "Math Homework",
+                description = "Chapter 3 exercises",
+                dueDate = Timestamp.now(),
+                grade = 95f,
+                type = "Homework"
+            ),
+            AssignmentItem(
+                id = "2",
+                title = "Science Test",
+                description = "Lab quiz",
+                dueDate = Timestamp.now(),
+                grade = 88f,
+                type = "Test"
+            ),
+            AssignmentItem(
+                id = "3",
+                title = "History Project",
+                description = "Group presentation",
+                dueDate = Timestamp.now(),
+                grade = 92f,
+                type = "Project"
+            )
+        )
+
+        updateUIWithAssignments()
+
+        // Step 2: Fetch from Firestore and replace if available
+        db.collection("Classes").get().addOnSuccessListener { classDocs ->
+            val fetchedAssignments = mutableListOf<AssignmentItem>()
+            val totalClasses = classDocs.size()
+            if (totalClasses == 0) return@addOnSuccessListener
+
+            var processed = 0
+            for (classDoc in classDocs) {
+                db.collection("Classes").document(classDoc.id)
+                    .collection("Assignments")
+                    .get()
+                    .addOnSuccessListener { assignmentDocs ->
+                        for (doc in assignmentDocs) {
+                            val due = doc.getTimestamp("dueDate") ?: Timestamp.now()
+                            val assignment = AssignmentItem(
+                                id = doc.id,
+                                title = doc.getString("title") ?: "",
+                                description = doc.getString("description") ?: "",
+                                dueDate = due,
+                                grade = (doc.getDouble("grade") ?: 0.0).toFloat(),
+                                type = doc.getString("type") ?: "Other"
+                            )
+                            fetchedAssignments.add(assignment)
+                        }
+                        processed++
+                        if (processed == totalClasses) {
+                            assignments = fetchedAssignments
+                            updateUIWithAssignments()
+                        }
+                    }
+                    .addOnFailureListener {
+                        processed++
+                        if (processed == totalClasses) {
+                            assignments = fetchedAssignments
+                            updateUIWithAssignments()
+                        }
+                    }
+            }
+        }
+    }
+
+    private fun updateUIWithAssignments() {
         // Reset MDPs
         homeworkMDP.reset()
         testMDP.reset()
         projectMDP.reset()
 
-        // Fetch assignments from Firestore
-        db.collection("Classes")
-            .get()
-            .addOnSuccessListener { classesSnapshot ->
-                val allAssignments = mutableListOf<AssignmentItem>()
-
-                classesSnapshot.documents.forEach { classDoc ->
-                    db.collection("Classes").document(classDoc.id)
-                        .collection("Assignments")
-                        .get()
-                        .addOnSuccessListener { assignmentsSnapshot ->
-                            assignmentsSnapshot.documents.forEach { doc ->
-                                val gradeValue = doc.get("grade")
-                                val gradeFloat = when (gradeValue) {
-                                    is Number -> gradeValue.toFloat()
-                                    is String -> gradeValue.toFloatOrNull() ?: 0f
-                                    else -> 0f
-                                }
-                                val assignment = AssignmentItem(
-                                    id = doc.id,
-                                    title = doc.getString("title") ?: "Untitled",
-                                    description = doc.getString("description") ?: "",
-                                    dueDate = doc.getTimestamp("dueDate") ?: Timestamp.now(),
-                                    grade = gradeFloat,
-                                    type = doc.getString("type") ?: "Other"
-                                )
-                                allAssignments.add(assignment)
-
-                                // Update MDPs
-                                when (assignment.type) {
-                                    "Homework" -> homeworkMDP.stepWithGrade(assignment.grade)
-                                    "Test" -> testMDP.stepWithGrade(assignment.grade)
-                                    "Project" -> projectMDP.stepWithGrade(assignment.grade)
-                                }
-                            }
-
-                            // Update UI
-                            binding.homeworkProgress.progress =
-                                (homeworkMDP.gpa / 4.0 * 100).toInt()
-                            binding.testProgress.progress =
-                                (testMDP.gpa / 4.0 * 100).toInt()
-                            binding.projectProgress.progress =
-                                (projectMDP.gpa / 4.0 * 100).toInt()
-
-                            binding.tvHomework.text =
-                                "Homework: ${homeworkMDP.state.label} | GPA: ${"%.2f".format(homeworkMDP.gpa)}"
-                            binding.tvTests.text =
-                                "Tests: ${testMDP.state.label} | GPA: ${"%.2f".format(testMDP.gpa)}"
-                            binding.tvProjects.text =
-                                "Projects: ${projectMDP.state.label} | GPA: ${"%.2f".format(projectMDP.gpa)}"
-
-                            // Optional: compute level based on GPA average
-                            val averageGPA = (homeworkMDP.gpa + testMDP.gpa + projectMDP.gpa) / 3.0
-                            val level = (averageGPA / 4.0 * 10).toInt() // example level system
-                            binding.tvLevel.text = "Level: $level"
-                            binding.levelProgress.progress = (averageGPA / 4.0 * 100).toInt()
-                        }
-                }
+        // Step 1: Compute MDPs for all assignments
+        for (assignment in assignments) {
+            when (assignment.type) {
+                "Homework" -> homeworkMDP.stepWithGrade(assignment.grade)
+                "Test" -> testMDP.stepWithGrade(assignment.grade)
+                "Project" -> projectMDP.stepWithGrade(assignment.grade)
             }
+        }
+
+        // Step 2: Update progress bars
+        binding.homeworkProgress.progress = (homeworkMDP.gpa / 4.0 * 100).toInt()
+        binding.testProgress.progress = (testMDP.gpa / 4.0 * 100).toInt()
+        binding.projectProgress.progress = (projectMDP.gpa / 4.0 * 100).toInt()
+
+        // Step 3: Update labels
+        binding.tvHomework.text =
+            "Homework: ${homeworkMDP.state.label} | GPA: ${"%.2f".format(homeworkMDP.gpa)}"
+        binding.tvTests.text =
+            "Tests: ${testMDP.state.label} | GPA: ${"%.2f".format(testMDP.gpa)}"
+        binding.tvProjects.text =
+            "Projects: ${projectMDP.state.label} | GPA: ${"%.2f".format(projectMDP.gpa)}"
+
+        // Step 4: Update level
+        val avgGPA = (homeworkMDP.gpa + testMDP.gpa + projectMDP.gpa) / 3.0
+        binding.tvLevel.text = "Level: ${(avgGPA / 4.0 * 10).toInt()}"
+        binding.levelProgress.progress = (avgGPA / 4.0 * 100).toInt()
     }
 
     private fun replaceProfileImage() {
@@ -121,11 +163,7 @@ class HomeFragment : Fragment() {
             binding.ivProfileImage.setImageBitmap(bitmap)
             Snackbar.make(binding.root, "Profile image updated!", Snackbar.LENGTH_SHORT).show()
         } else {
-            Snackbar.make(
-                binding.root,
-                "No AI image found. Generate one in Profile.",
-                Snackbar.LENGTH_SHORT
-            ).show()
+            Snackbar.make(binding.root, "No AI image found. Generate one in Profile.", Snackbar.LENGTH_SHORT).show()
         }
     }
 

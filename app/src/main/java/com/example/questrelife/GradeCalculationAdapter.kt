@@ -9,8 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 
 class GradeCalculationAdapter(
     private val assignments: MutableList<AssignmentItem> = mutableListOf(),
-    private val onProgressUpdate: ((Int) -> Unit)? = null,
-    private val onCompletionUpdate: ((List<Float>) -> Unit)? = null
+    private val onProgressUpdate: ((Int) -> Unit)? = null,       // Overall completion callback
+    private val onCompletionUpdate: ((List<Float>) -> Unit)? = null // Grades callback
 ) : RecyclerView.Adapter<GradeCalculationAdapter.AssignmentViewHolder>() {
 
     inner class AssignmentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -34,22 +34,27 @@ class GradeCalculationAdapter(
         val grade = assignment.grade
         if (grade > 0f) {
             val letter = convertToLetter(grade)
-            holder.statusText.text =
-                "Completed – Grade: ${"%.1f".format(grade)}% ($letter)"
+            holder.statusText.text = "Completed – Grade: ${"%.1f".format(grade)}% ($letter)"
 
-            // ✅ Color coding
-            when {
-                grade >= 80 -> holder.statusText.setTextColor(Color.parseColor("#2E7D32")) // green
-                grade in 70.0..79.99 -> holder.statusText.setTextColor(Color.parseColor("#F9A825")) // yellow
-                else -> holder.statusText.setTextColor(Color.parseColor("#C62828")) // red
-            }
+            // Color coding
+            holder.statusText.setTextColor(
+                when {
+                    grade >= 80 -> Color.parseColor("#2E7D32") // green
+                    grade in 70.0..79.99 -> Color.parseColor("#F9A825") // yellow
+                    else -> Color.parseColor("#C62828") // red
+                }
+            )
         } else {
             holder.statusText.text = "Incomplete – Not graded yet"
             holder.statusText.setTextColor(Color.GRAY)
         }
 
-        val dueDate = assignment.dueDate.toDate().toString().substring(0, 16)
-        holder.dueDateText.text = "Due: $dueDate"
+        // Format due date safely
+        holder.dueDateText.text = try {
+            "Due: ${assignment.dueDate.toDate().toString().substring(0, 16)}"
+        } catch (e: Exception) {
+            "Due: TBD"
+        }
     }
 
     override fun getItemCount(): Int = assignments.size
@@ -72,13 +77,11 @@ class GradeCalculationAdapter(
         onProgressUpdate?.invoke(progress)
     }
 
-    private fun convertToLetter(grade: Float): String {
-        return when {
-            grade >= 90 -> "A"
-            grade >= 80 -> "B"
-            grade >= 70 -> "C"
-            grade >= 60 -> "D"
-            else -> "F"
-        }
+    private fun convertToLetter(grade: Float): String = when {
+        grade >= 90 -> "A"
+        grade >= 80 -> "B"
+        grade >= 70 -> "C"
+        grade >= 60 -> "D"
+        else -> "F"
     }
 }

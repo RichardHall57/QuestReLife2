@@ -1,7 +1,15 @@
 package com.example.questrelife
 
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
+import com.google.firebase.firestore.QuerySnapshot
+import kotlinx.coroutines.tasks.await
+import java.lang.Exception
 
+/**
+ * Adds a new Semester to Firestore.
+ * Returns the Firestore-generated ID via onSuccess, or error via onFailure.
+ */
 fun addSemester(
     db: FirebaseFirestore,
     semester: Semester,
@@ -16,14 +24,17 @@ fun addSemester(
 
     db.collection("Semester")
         .add(semesterMap)
-        .addOnSuccessListener { documentReference ->
-            onSuccess(documentReference.id) // return Firestore-generated ID
+        .addOnSuccessListener { docRef ->
+            onSuccess(docRef.id)
         }
-        .addOnFailureListener { exception ->
-            onFailure(exception)
+        .addOnFailureListener { e ->
+            onFailure(e)
         }
-}  // <-- missing closing brace fixed here
+}
 
+/**
+ * Adds a Class linked to a Semester.
+ */
 fun addClass(
     db: FirebaseFirestore,
     classItem: ClassItem,
@@ -34,15 +45,69 @@ fun addClass(
     val classMap = hashMapOf(
         "name" to classItem.name,
         "teacher" to classItem.teacher,
-        "semesterId" to semesterId  // Link class to semester
+        "semesterId" to semesterId
     )
 
-    db.collection("Classes")  // Your collection for classes
+    db.collection("Classes")
         .add(classMap)
-        .addOnSuccessListener { documentReference ->
-            onSuccess(documentReference.id)  // Firestore document ID of new class
+        .addOnSuccessListener { docRef ->
+            onSuccess(docRef.id)
         }
-        .addOnFailureListener { exception ->
-            onFailure(exception)
+        .addOnFailureListener { e ->
+            onFailure(e)
         }
+}
+
+fun fetchClassesForSemester(
+    db: FirebaseFirestore,
+    semesterId: String,
+    limit: Long = 50,
+    onSuccess: (List<ClassItem>) -> Unit,
+    onFailure: (Exception) -> Unit
+) {
+    db.collection("Classes")
+        .whereEqualTo("semesterId", semesterId)
+        .limit(limit)
+        .get()
+        .addOnSuccessListener { snapshot ->
+            val classes = snapshot.mapNotNull { doc ->
+                val name = doc.getString("name") ?: return@mapNotNull null
+                val teacher = doc.getString("teacher") ?: ""
+                ClassItem(
+                    id = doc.id,
+                    name = name,
+                    teacher = teacher
+                )
+            }
+            onSuccess(classes)
+        }
+        .addOnFailureListener { e ->
+            onFailure(e)
+        }
+}
+
+suspend fun fetchClassesForSemesterSuspend(
+    db: FirebaseFirestore,
+    semesterId: String,
+    limit: Long = 50
+): List<ClassItem> {
+    return try {
+        val snapshot: QuerySnapshot = db.collection("Classes")
+            .whereEqualTo("semesterId", semesterId)
+            .limit(limit)
+            .get()
+            .await()
+
+        snapshot.mapNotNull { doc ->
+            val name = doc.getString("name") ?: return@mapNotNull null
+            val teacher = doc.getString("teacher") ?: ""
+            ClassItem(
+                id = doc.id,
+                name = name,
+                teacher = teacher
+            )
+        }
+    } catch (e: Exception) {
+        emptyList()
+    }
 }

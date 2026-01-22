@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
@@ -20,6 +21,7 @@ class SignUpActivity : AppCompatActivity() {
     private lateinit var passwordEditText: EditText
     private lateinit var confirmPasswordEditText: EditText
     private lateinit var signUpButton: Button
+    private lateinit var loginRedirect: TextView   // ✅ ADDED
 
     private val firestore = FirebaseFirestore.getInstance()
 
@@ -35,8 +37,14 @@ class SignUpActivity : AppCompatActivity() {
         passwordEditText = findViewById(R.id.password_edit_text)
         confirmPasswordEditText = findViewById(R.id.confirm_password_edit_text)
         signUpButton = findViewById(R.id.sign_up_button)
+        loginRedirect = findViewById(R.id.login_redirect)
 
         signUpButton.setOnClickListener { createAccount() }
+
+        loginRedirect.setOnClickListener {
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
+        }
 
         dobEditText.setOnClickListener {
             val calendar = Calendar.getInstance()
@@ -44,12 +52,15 @@ class SignUpActivity : AppCompatActivity() {
             val month = calendar.get(Calendar.MONTH)
             val day = calendar.get(Calendar.DAY_OF_MONTH)
 
-            val datePickerDialog = DatePickerDialog(this,
+            val datePickerDialog = DatePickerDialog(
+                this,
                 { _, selectedYear, selectedMonth, selectedDay ->
-                    // Format as MM/DD/YYYY
                     val selectedDate = "${selectedMonth + 1}/$selectedDay/$selectedYear"
                     dobEditText.setText(selectedDate)
-                }, year, month, day
+                },
+                year,
+                month,
+                day
             )
             datePickerDialog.show()
         }
@@ -77,9 +88,8 @@ class SignUpActivity : AppCompatActivity() {
                 if (task.isSuccessful) {
                     val userId = auth.currentUser?.uid ?: return@addOnCompleteListener
 
-                    // Save extra user data to Firestore
                     val user = hashMapOf(
-                        "user_name" to fullName,          // replace "name" with "user_name"
+                        "user_name" to fullName,
                         "email" to email,
                         "dob" to dob,
                         "bio" to "",
@@ -96,13 +106,20 @@ class SignUpActivity : AppCompatActivity() {
                             finish()
                         }
                         .addOnFailureListener {
-                            Toast.makeText(this, "Failed to save user data: ${it.message}", Toast.LENGTH_LONG).show()
+                            Toast.makeText(
+                                this,
+                                "Failed to save user data: ${it.message}",
+                                Toast.LENGTH_LONG
+                            ).show()
                         }
 
                 } else {
-                    Toast.makeText(this, "Sign Up failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this,
+                        "Sign Up failed: ${task.exception?.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
-
     }
 }

@@ -2,44 +2,37 @@ package com.example.questrelife
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.questrelife.databinding.ActivityLoginBinding
 import com.google.firebase.auth.FirebaseAuth
 
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
-    private lateinit var emailEditText: EditText
-    private lateinit var passwordEditText: EditText
-    private lateinit var loginButton: Button
-    private lateinit var signUpButton: TextView   // FIXED
-    private lateinit var forgotPasswordButton: TextView   // FIXED
+    private lateinit var binding: ActivityLoginBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
+
+        binding = ActivityLoginBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         auth = FirebaseAuth.getInstance()
 
-        emailEditText = findViewById(R.id.email_edit_text)
-        passwordEditText = findViewById(R.id.password_edit_text)
-        loginButton = findViewById(R.id.login_button)
+        // Login Button
+        binding.loginButton.setOnClickListener { loginUser() }
 
-        // These are TEXTVIEWS, NOT buttons
-        signUpButton = findViewById(R.id.sign_up_button)
-        forgotPasswordButton = findViewById(R.id.forgot_password_button)
+        // Sign Up TextView as Button
+        binding.signUpButton.setOnClickListener { navigateToSignUp() }
 
-        loginButton.setOnClickListener { loginUser() }
-        signUpButton.setOnClickListener { navigateToSignUp() }
-        forgotPasswordButton.setOnClickListener { navigateToForgotPassword() }
+        // Forgot Password TextView as Button
+        binding.forgotPasswordButton.setOnClickListener { navigateToForgotPassword() }
     }
 
     private fun loginUser() {
-        val email = emailEditText.text.toString()
-        val password = passwordEditText.text.toString()
+        val email = binding.emailEditText.text.toString().trim()
+        val password = binding.passwordEditText.text.toString().trim()
 
         if (email.isEmpty() || password.isEmpty()) {
             Toast.makeText(this, "Please enter email and password", Toast.LENGTH_SHORT).show()
@@ -49,10 +42,11 @@ class LoginActivity : AppCompatActivity() {
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
+                    // Navigate to MainActivity
                     startActivity(Intent(this, MainActivity::class.java))
                     finish()
                 } else {
-                    Toast.makeText(this, "Authentication failed.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Authentication failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
                 }
             }
     }
@@ -65,4 +59,3 @@ class LoginActivity : AppCompatActivity() {
         startActivity(Intent(this, ForgotPasswordActivity::class.java))
     }
 }
-
